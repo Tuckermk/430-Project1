@@ -1,0 +1,31 @@
+{
+  "name": "430-project1",
+  "version": "1.0.0",
+  "description": "Project 1 for IGME430",
+  "main": "index.js",
+  "scripts": {
+    "start": "node ./src/server.js",
+    "pretest": "eslint ./src --fix",
+    "test": "echo \"Test Complete\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Tuckermk/430-Project1.git"
+  },
+  "keywords": [
+    "api",
+    "database",
+    "countries"
+  ],
+  "author": "Tucker K",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Tuckermk/430-Project1/issues"
+  },
+  "homepage": "https://github.com/Tuckermk/430-Project1#readme",
+  "devDependencies": {
+    "eslint": "^8.57.1",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-plugin-import": "^2.32.0"
+  }
+}
