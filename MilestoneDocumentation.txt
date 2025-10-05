@@ -1,0 +1,22 @@
+Dataset being used: countries.json
+Completed Work:
+	Status Codes 200,201,204, & 404
+	4 GET endpoints & head request
+		getName, getCapital,getRegion,getNationality
+	filtering get request
+	2 POST endpoints for adding and removing data
+		addCountry, editCountry
+	Error 404
+	Content-Type
+	Content-Length
+	Server side files
+To be done
+	Cleaning up DRY areas cause i did that
+	Having multiple filters on at once
+	Having it be a selected option to grab only one thing when listing out the data currently works if no filters are in place
+	Adding other status codes like 400
+	Add a Coordinate based endpoint
+	ESLint based cleanup
+	CSS
+No defined plans for going above atm
+Im not using any code that wasnt either provided or I wrote

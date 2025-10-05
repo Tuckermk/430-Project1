@@ -32,15 +32,12 @@
         //If the server sent back json
         if(contentType === 'application/json') {
           //Parse the json back into a javascript object, and display the data.
-          const parsedResponse = JSON.parse(resText);
-          h1.textContent = `Message: ${parsedResponse.message}`;
-          p.textContent = `ID: ${parsedResponse.id}`;
-        } else if (contentType === 'text/xml') { //If the server sent back xml
-          //Parse the xml into a document and select the data out.
-          const parsedResponse = new window.DOMParser().parseFromString(resText, 'text/xml');
-          h1.textContent = 'Message: ' + parsedResponse.querySelector('message').textContent;
-          p.textContent = 'ID: ' + parsedResponse.querySelector('id').textContent;
-        }
+          if(resText){
+            const parsedResponse = JSON.parse(resText);
+            h1.textContent = `Message: ${parsedResponse.message}`;
+            p.textContent = `ID: ${parsedResponse.id}`;
+          }
+        } 
 
         //Add the elements to the screen.
         content.innerHTML ="";
@@ -51,10 +48,11 @@
       });
     };
 
+    let methoder;
    //send the GET request to the server
    function sendFetchRequest(url, restriction){
       const options = {
-         method: 'GET',
+         method: methoder.value,
          headers: {'restriction': restriction}
       }
       
@@ -137,6 +135,8 @@
          sendPost('/editCountry');
       });
 
+      methoder = document.querySelector('#methodSelect');
+
       //Once we have a response, handle it.
 
       // handleResponse(response);
@@ -161,6 +161,7 @@
 <body>
   <section id="top">
    <h3>Countries API</h3>
+   
    <form id ="countryForm" action="/countries" method="get">
       <label for="countryRestrictions">Country Restrictions: </label>
       <input id="countryRestrictionsField" type="text"/>
@@ -190,7 +191,10 @@
       <input id="longitudeRestrictionsField" type="text"/>
       <button id="coordsSend">Send</button>
    </form> -->
-
+   <select id="methodSelect">
+        <option value="get">GET</option>
+        <option value="head">HEAD</option>
+   </select>
 
   </section>
   <section id="content">

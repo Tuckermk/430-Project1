@@ -17,8 +17,8 @@ function respondJSON(request, response, status, object) {
   }
   response.end();
 }
-
-//NTS: this is so on the boarder of DRY so ask about it/ rework it
+let o;
+//NTS: this is so on the border of DRY so ask about it/ rework it
 //function for applying search parameters returning the new dataset
 function restrict(dataset,restrictions){
    //code to limit the returning data 
