@@ -26,7 +26,7 @@ function restrict(dataset,restriction){
    if(dataset === 'name'){
       o = 0;
       while(db[o]){
-         if (db[o].name.toLowerCase() === restriction.toLowerCase()) {
+         if (db[o].name.toLowerCase().includes(restriction.toLowerCase())) {
             restrictedDataset.push(db[o]);
          }
          o++;
@@ -40,6 +40,7 @@ function restrict(dataset,restriction){
    return restrictedDataset;
 }
 
+//When there are no restrictions
 function onlyValue(dataset){
    let restrictedDataset = [];
    if(dataset === 'name'){
