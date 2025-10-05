@@ -35,6 +35,7 @@ const pathes = {
    '/capitals': jsonHandler.getCapitals,
    '/regions': jsonHandler.getRegion,
    '/coords': jsonHandler.getCoords,
+   '/nationality': jsonHandler.getNationality,
 
    //error pathes **NTS: Might be worth adding other errors
   '/badRequest': jsonHandler.badRequest,
@@ -53,9 +54,12 @@ const handleGet = (request, response, parsedUrl) => {
 };
 // handle POST requests
 const handlePost = (request, response, parsedUrl) => {
-//   if (parsedUrl.pathname === '/addUser') {
-//     parseBody(request, response, jsonHandler.addUsers);
-//   }
+  if (parsedUrl.pathname === '/addCountry') {
+    parseBody(request, response, jsonHandler.addCountry);
+  }
+  if (parsedUrl.pathname === '/editCountry') {
+    parseBody(request, response, jsonHandler.editCountry);
+  }
 };
 
 
@@ -63,6 +67,7 @@ const onRequest = (request, response) => {
   const protocol = request.connection.encrypted ? 'https' : 'http';
   const parsedUrl = new URL(request.url, `${protocol}://${request.headers.host}`);
   if (request.method === 'POST') {
+      // console.log("POST");
     handlePost(request, response, parsedUrl);
   } else {
     handleGet(request, response, parsedUrl);

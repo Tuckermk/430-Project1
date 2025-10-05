@@ -8,9 +8,49 @@
   
   <script>
 
-   function handleResponse(response){
-      return 'hi';
-   }
+   function handleResponse(response) {
+
+      response.text().then((resText) => {
+
+        const contentType = response.headers.get('Content-Type');
+
+        //Grab the content section from the HTML so we can put things on the screen.
+        const content = document.querySelector('#content');
+        //Add a horizontal rule.
+        content.appendChild(document.createElement('hr'));
+
+        //Create some dom elements to display later
+        const h1 = document.createElement('h5');
+        const p = document.createElement('p');
+        const h2 = document.createElement('h6');
+        const rawData = document.createElement('p');
+
+        //Add the content type and raw response text to elements
+        h2.textContent = contentType;
+        rawData.textContent = resText;
+
+        //If the server sent back json
+        if(contentType === 'application/json') {
+          //Parse the json back into a javascript object, and display the data.
+          const parsedResponse = JSON.parse(resText);
+          h1.textContent = `Message: ${parsedResponse.message}`;
+          p.textContent = `ID: ${parsedResponse.id}`;
+        } else if (contentType === 'text/xml') { //If the server sent back xml
+          //Parse the xml into a document and select the data out.
+          const parsedResponse = new window.DOMParser().parseFromString(resText, 'text/xml');
+          h1.textContent = 'Message: ' + parsedResponse.querySelector('message').textContent;
+          p.textContent = 'ID: ' + parsedResponse.querySelector('id').textContent;
+        }
+
+        //Add the elements to the screen.
+        content.innerHTML ="";
+        content.appendChild(h1);
+      //   content.appendChild(p);
+        content.appendChild(h2);
+      //   content.appendChild(rawData);       
+      });
+    };
+
    //send the GET request to the server
    function sendFetchRequest(url, restriction){
       const options = {
@@ -22,20 +62,99 @@
 
       fetchPromise.then((response) => {handleResponse(response)});
    }
-
+   
+   let countryRestrictionField;
+   let capitalRestrictionField;
+   let regionRestrictionField;
+   let nationalityRestrictionField;
 
    function init(){
-      const restrictionField = document.querySelector('#restrictionsField');
-      const form = document.querySelector('#countryForm');
-      const button = document.querySelector('#send');
+      countryRestrictionField = document.querySelector('#countryRestrictionsField');
+      const countryForm = document.querySelector('#countryForm');
+      const countryButton = document.querySelector('#countrySend');
 
-      button.addEventListener("click", (e) => {
+      countryButton.addEventListener("click", (e) => {
         e.preventDefault(); 
-        const restriction = restrictionField.value.trim();
-
+        let restriction = countryRestrictionField.value.trim();
         sendFetchRequest('/countries', restriction);
+
       });
-      };
+
+      capitalRestrictionField = document.querySelector('#capitalRestrictionsField');
+      const capitalForm = document.querySelector('#capitalForm');
+      const capitalButton = document.querySelector('#capitalSend');
+
+      capitalButton.addEventListener("click", (e) => {
+        e.preventDefault(); 
+        let restriction = capitalRestrictionField.value.trim();
+        sendFetchRequest('/capitals', restriction);
+
+      });
+
+      regionRestrictionField = document.querySelector('#regionRestrictionsField');
+      const regionForm = document.querySelector('#regionForm');
+      const regionButton = document.querySelector('#regionSend');
+
+      regionButton.addEventListener("click", (e) => {
+        e.preventDefault(); 
+        let restriction = regionRestrictionField.value.trim();
+        sendFetchRequest('/regions', restriction);
+
+      });
+
+      nationalityRestrictionField = document.querySelector('#nationalityRestrictionsField');
+      const nationalityForm = document.querySelector('#nationalityForm');
+      const nationalityButton = document.querySelector('#nationalitySend');
+
+      nationalityButton.addEventListener("click", (e) => {
+        e.preventDefault(); 
+        let restriction = nationalityRestrictionField.value.trim();
+        sendFetchRequest('/nationality', restriction);
+
+      });
+
+      // const lattitudeRestrictionsField = document.querySelector('#lattitudeRestrictionsField');
+      // const longitudeRestrictionsField = document.querySelector('#longitudeRestrictionsField');
+      // const coordsForm = document.querySelector('#coordsForm');
+      // const coordsButton = document.querySelector('#coordsSend');
+
+      // coordsButton.addEventListener("click", (e) => {
+      //   e.preventDefault(); 
+      //   let restriction = [lattitudeRestrictionField.value.trim(),longitudeRestrictionsField.value.trim()];
+
+      //   sendFetchRequest('/coords', restriction);
+      // });
+
+      const addButton = document.querySelector('#addCountrySend');
+         addButton.addEventListener("click", (e) => {
+         e.preventDefault(); 
+         sendPost('/addCountry');
+      });
+
+      const editButton = document.querySelector('#editCountrySend');
+         editButton.addEventListener("click", (e) => {
+         e.preventDefault(); 
+         sendPost('/editCountry');
+      });
+
+      //Once we have a response, handle it.
+
+      // handleResponse(response);
+
+    };
+   const sendPost = async (url) => {
+      const formData = `name=${countryRestrictionField.value}&capital=${capitalRestrictionField.value}&region=${regionRestrictionField.value}&nationality=${nationalityRestrictionField.value}`;
+
+       const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Accept': 'application/json',
+        },
+        body: formData,
+      });
+   }
+
     window.onload = init;
   </script>
 </head>
@@ -43,30 +162,36 @@
   <section id="top">
    <h3>Countries API</h3>
    <form id ="countryForm" action="/countries" method="get">
-      <label for="restrictions">Restrictions: </label>
-      <input id="restrictionsField" type="text"/>
-      <button id="send">Send</button>
+      <label for="countryRestrictions">Country Restrictions: </label>
+      <input id="countryRestrictionsField" type="text"/>
+      <button id="countrySend">Send</button>
    </form>
+   <form id ="capitalForm" action="/capitals" method="get">
+      <label for="capitalRestrictions">Capital Restrictions: </label>
+      <input id="capitalRestrictionsField" type="text"/>
+      <button id="capitalSend">Send</button>
+   </form>
+   <form id ="regionForm" action="/regions" method="get">
+      <label for="regionRestrictions">Region Restrictions: </label>
+      <input id="regionRestrictionsField" type="text"/>
+      <button id="regionSend">Send</button>
+   </form>
+   <form id ="nationalityForm" action="/nationality" method="get">
+      <label for="nationalityRestrictions">Nationality Restrictions: </label>
+      <input id="nationalityRestrictionsField" type="text"/>
+      <button id="nationalitySend">Send</button>
+   </form>
+   <form id ="postForm" action="/addCountry"><button id="addCountrySend">Add Country</button></form>
+   <form id ="postForm" action="/editCountry"><button id="editCountrySend">Edit Country</button></form>
+   <!-- <form id ="coordsForm" action="/coords" method="get">
+      <label for="lattitudeRestrictions">Lattitude Restrictions: </label>
+      <input id="lattitudeRestrictionsField" type="text"/>
+      <label for="longitudeRestrictions">Longitude Restrictions: </label>
+      <input id="longitudeRestrictionsField" type="text"/>
+      <button id="coordsSend">Send</button>
+   </form> -->
 
-    <!-- <h3>POST Status Code Tests</h3>
-    <form id="nameForm" action="/addUser" method="post">
-      <label for="county">Country: </label>
-      <input id="countryField" type="text" name="name" /> -->
-      <!-- <label for="age">Age: </label>
-      <input id="ageField" type="number" name="age" min="0" max="100" step="1"/> -->
-      <!-- <input type="submit" value="Add User" /> -->
-    <!-- </form> -->
-    <!-- <form id="countryForm" action="/GETcountries" method="get">
-      <select id='urlField'>
-        <option value='/countries'>/getCountries</option>
-        <option value='/notFound'>/notFound</option>
-      </select>
-      <select id="methodSelect">
-        <option value="get">GET</option>
-        <option value="head">HEAD</option>
-      </select>
-      
-    </form> -->
+
   </section>
   <section id="content">
   </section>
