@@ -1,3 +1,4 @@
+
 const http = require('http');
 const query = require('querystring');
 const htmlHandler = require('./htmlResponse.js');
@@ -5,7 +6,7 @@ const jsonHandler = require('./jsonResponse.js');
 
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
-//handle incoming data to make it usable
+// handle incoming data to make it usable
 const parseBody = (request, response, handler) => {
   const body = [];
   request.on('error', () => {
@@ -22,27 +23,21 @@ const parseBody = (request, response, handler) => {
   });
 };
 
-// handle POST requests
-const handlePost = (request, response, parsedUrl) => {
-//   if (parsedUrl.pathname === '/addUser') {
-//     parseBody(request, response, jsonHandler.addUsers);
-//   }
-};
 
-//All possible request pathes the server will use
+
+// all possible request pathes the server will use
 const pathes = {
    //html pathes
    '/': htmlHandler.getIndex,
    '/style.css': htmlHandler.getCSS,
    //json pathes
+   '/names': jsonHandler.getNames,
+   '/capitals': jsonHandler.getCapitals,
+   '/regions': jsonHandler.getRegion,
+   '/coords': jsonHandler.getCoords,
 
-
-   //error pathes
+   //error pathes **NTS: Might be worth adding other errors
   '/badRequest': jsonHandler.badRequest,
-  '/unauthorized': jsonHandler.unauthorized,
-  '/forbidden': jsonHandler.forbidden,
-  '/internal': jsonHandler.internal,
-  '/notImplemented': jsonHandler.notImplemented,
   notfound: jsonHandler.notFound,   
 }
 
@@ -56,6 +51,13 @@ const handleGet = (request, response, parsedUrl) => {
    }
 
 };
+// handle POST requests
+const handlePost = (request, response, parsedUrl) => {
+//   if (parsedUrl.pathname === '/addUser') {
+//     parseBody(request, response, jsonHandler.addUsers);
+//   }
+};
+
 
 const onRequest = (request, response) => {
   const protocol = request.connection.encrypted ? 'https' : 'http';
