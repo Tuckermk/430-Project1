@@ -1,0 +1,74 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Countries API</title>
+  <link rel="stylesheet" type="text/css" href="/style.css">
+  
+  <script>
+
+   function handleResponse(response){
+      return 'hi';
+   }
+   //send the GET request to the server
+   function sendFetchRequest(url, restriction){
+      const options = {
+         method: 'GET',
+         headers: {'restriction': restriction}
+      }
+      
+      const fetchPromise = fetch(url, options);
+
+      fetchPromise.then((response) => {handleResponse(response)});
+   }
+
+
+   function init(){
+      const restrictionField = document.querySelector('#restrictionsField');
+      const form = document.querySelector('#countryForm');
+      const button = document.querySelector('#send');
+
+      button.addEventListener("click", (e) => {
+        e.preventDefault(); 
+        const restriction = restrictionField.value.trim();
+
+        sendFetchRequest('/countries', restriction);
+      });
+      };
+    window.onload = init;
+  </script>
+</head>
+<body>
+  <section id="top">
+   <h3>Countries API</h3>
+   <form id ="countryForm" action="/countries" method="get">
+      <label for="restrictions">Restrictions: </label>
+      <input id="restrictionsField" type="text"/>
+      <button id="send">Send</button>
+   </form>
+
+    <!-- <h3>POST Status Code Tests</h3>
+    <form id="nameForm" action="/addUser" method="post">
+      <label for="county">Country: </label>
+      <input id="countryField" type="text" name="name" /> -->
+      <!-- <label for="age">Age: </label>
+      <input id="ageField" type="number" name="age" min="0" max="100" step="1"/> -->
+      <!-- <input type="submit" value="Add User" /> -->
+    <!-- </form> -->
+    <!-- <form id="countryForm" action="/GETcountries" method="get">
+      <select id='urlField'>
+        <option value='/countries'>/getCountries</option>
+        <option value='/notFound'>/notFound</option>
+      </select>
+      <select id="methodSelect">
+        <option value="get">GET</option>
+        <option value="head">HEAD</option>
+      </select>
+      
+    </form> -->
+  </section>
+  <section id="content">
+  </section>
+</body>
+</html>

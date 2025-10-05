@@ -1,6 +1,7 @@
 
 const fs = require('fs');
-const db = require(`${__dirname}/../db/countries.json`)
+const countriesfile = fs.readFileSync(`${__dirname}/../db/countries.json`)
+const db = JSON.parse(countriesfile);
 
 //Function that actually sends out data
 function respondJSON(request, response, status, object) {
@@ -17,19 +18,56 @@ function respondJSON(request, response, status, object) {
   response.end();
 }
 
-let restrictedDataset;
+
 //function for applying search parameters returning the new dataset
 function restrict(dataset,restriction){
    //code to limit the returning data 
-   
+   let restrictedDataset = [];
+   if(dataset === 'name'){
+      o = 0;
+      while(db[o]){
+         if (db[o].name.toLowerCase() === restriction.toLowerCase()) {
+            restrictedDataset.push(db[o]);
+         }
+         o++;
+      }
+      
+   }
+   else if(dataset === 'capital'){
+
+   }
 
    return restrictedDataset;
 }
 
-//get Country Names || 200 status
-function getNames(request, response, restriction){
-   const responseJSON = {message: 'beep'};
+function onlyValue(dataset){
+   let restrictedDataset = [];
+   if(dataset === 'name'){
+      o = 0;
+      while(db[o]){ 
+         restrictedDataset.push(db[o].name);
+         o++;
+      }
+   }
+   if(dataset === 'capital'){
+      o = 0;
+      while(db[o]){ 
+         restrictedDataset.push(db[o].capital);
+         o++;
+      }
+   }
+   return restrictedDataset;
+}
 
+//get Country Names || 200 status
+function getNames(request, response){
+   const restriction = request.headers.restriction;
+   let dataset = onlyValue('name');
+   if(restriction){
+      dataset = restrict('name',restriction)
+   }
+   const responseJSON = {message: `${JSON.stringify(dataset)}`};
+   console.log(dataset);
    return respondJSON(request,response,200, responseJSON)
 }
 

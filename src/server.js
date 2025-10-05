@@ -31,14 +31,14 @@ const pathes = {
    '/': htmlHandler.getIndex,
    '/style.css': htmlHandler.getCSS,
    //json pathes
-   '/names': jsonHandler.getNames,
+   '/countries': jsonHandler.getNames,
    '/capitals': jsonHandler.getCapitals,
    '/regions': jsonHandler.getRegion,
    '/coords': jsonHandler.getCoords,
 
    //error pathes **NTS: Might be worth adding other errors
   '/badRequest': jsonHandler.badRequest,
-  notfound: jsonHandler.notFound,   
+  notFound: jsonHandler.notFound,   
 }
 
 // handle GET requests
