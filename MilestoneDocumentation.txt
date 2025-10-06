@@ -18,5 +18,6 @@ To be done
 	Add a Coordinate based endpoint
 	ESLint based cleanup
 	CSS
+	Fix Github Actions errors
 No defined plans for going above atm
 Im not using any code that wasnt either provided or I wrote

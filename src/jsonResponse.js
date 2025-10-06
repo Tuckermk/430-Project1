@@ -23,54 +23,25 @@ let o;
 function restrict(dataset,restrictions){
    //code to limit the returning data 
    let restrictedDataset = [];
-   if(dataset === 'name'){
-      o = 0;
-      while(db[o]){
-         if (db[o].name.toLowerCase().includes(restrictions.toLowerCase())) {
-            restrictedDataset.push(db[o]);
-         }
-         o++;
+    o = 0;
+   while(db[o]){
+      if (db[o][dataset].toLowerCase().includes(restrictions.toLowerCase())) {
+         restrictedDataset.push(db[o]);
       }
-      
-   }
-   else if(dataset === 'capital'){
-      o = 0;
-      while(db[o]){
-         if (db[o].capital.toLowerCase().includes(restrictions.toLowerCase())) {
-            restrictedDataset.push(db[o]);
-         }
-         o++;
-      }
-   }
-   else if(dataset === 'region'){
-      o = 0;
-      while(db[o]){
-         if (db[o].capital.toLowerCase().includes(restrictions.toLowerCase())) {
-            restrictedDataset.push(db[o]);
-         }
-         o++;
-      }
-   }
-   else if(dataset === 'nationality'){
-      o = 0;
-      while(db[o]){
-         if (db[o].nationality.toLowerCase().includes(restrictions.toLowerCase())) {
-            restrictedDataset.push(db[o]);
-         }
-         o++;
-      }
+      o++;
    }
 
+
    //NTS: Needs to be done uniquely probably
-   else if(dataset === 'coords'){
-      o = 0;
-      while(db[o]){
-         if (db[o].capital.toLowerCase().includes(restrictions.toLowerCase())) {
-            restrictedDataset.push(db[o]);
-         }
-         o++;
-      }
-   }
+   // else if(dataset === 'coords'){
+   //    o = 0;
+   //    while(db[o]){
+   //       if (db[o].capital.toLowerCase().includes(restrictions.toLowerCase())) {
+   //          restrictedDataset.push(db[o]);
+   //       }
+   //       o++;
+   //    }
+   // }
 
    return restrictedDataset;
 }
@@ -78,41 +49,11 @@ function restrict(dataset,restrictions){
 //When there are no restrictions but want only 1 type
 function onlyValue(dataset){
    let restrictedDataset = [];
-   if(dataset === 'name'){
-      o = 0;
+   o = 0;
       while(db[o]){ 
-         restrictedDataset.push(db[o].name);
+         restrictedDataset.push(db[o][dataset]);
          o++;
       }
-   }
-   if(dataset === 'capital'){
-      o = 0;
-      while(db[o]){ 
-         restrictedDataset.push(db[o].capital);
-         o++;
-      }
-   }
-   if(dataset === 'region'){
-      o = 0;
-      while(db[o]){ 
-         restrictedDataset.push(db[o].region);
-         o++;
-      }
-   }
-   if(dataset === 'coords'){
-      o = 0;
-      while(db[o]){ 
-         restrictedDataset.push(db[o].capital);
-         o++;
-      }
-   }
-   if(dataset === 'nationality'){
-      o = 0;
-      while(db[o]){ 
-         restrictedDataset.push(db[o].nationality);
-         o++;
-      }
-   }
    return restrictedDataset;
 }
 
