@@ -1,4 +1,3 @@
-
 const http = require('http');
 const query = require('querystring');
 const htmlHandler = require('./htmlResponse.js');
@@ -23,34 +22,31 @@ const parseBody = (request, response, handler) => {
   });
 };
 
-
-
 // all possible request pathes the server will use
 const pathes = {
-   //html pathes
-   '/': htmlHandler.getIndex,
-   '/style.css': htmlHandler.getCSS,
-   //json pathes
-   '/countries': jsonHandler.getNames,
-   '/capitals': jsonHandler.getCapitals,
-   '/regions': jsonHandler.getRegion,
-   '/coords': jsonHandler.getCoords,
-   '/nationality': jsonHandler.getNationality,
+  // html pathes
+  '/': htmlHandler.getIndex,
+  '/style.css': htmlHandler.getCSS,
+  // json pathes
+  '/countries': jsonHandler.getBlank,
+  '/capitals': jsonHandler.getBlank,
+  '/regions': jsonHandler.getBlank,
+  '/coords': jsonHandler.getBlank,
+  '/nationality': jsonHandler.getBlank,
+  '/multi': jsonHandler.getBlank,
 
-   //error pathes **NTS: Might be worth adding other errors
+  // error pathes **NTS: Might be worth adding other errors
   '/badRequest': jsonHandler.badRequest,
-  notFound: jsonHandler.notFound,   
-}
+  notFound: jsonHandler.notFound,
+};
 
 // handle GET requests
 const handleGet = (request, response, parsedUrl) => {
-   if(pathes[parsedUrl.pathname]){
-      pathes[parsedUrl.pathname](request,response);
-   }
-   else {
-      pathes.notFound(request,response);
-   }
-
+  if (pathes[parsedUrl.pathname]) {
+    pathes[parsedUrl.pathname](request, response);
+  } else {
+    pathes.notFound(request, response);
+  }
 };
 // handle POST requests
 const handlePost = (request, response, parsedUrl) => {
@@ -62,12 +58,11 @@ const handlePost = (request, response, parsedUrl) => {
   }
 };
 
-
 const onRequest = (request, response) => {
   const protocol = request.connection.encrypted ? 'https' : 'http';
   const parsedUrl = new URL(request.url, `${protocol}://${request.headers.host}`);
   if (request.method === 'POST') {
-      // console.log("POST");
+    // console.log("POST");
     handlePost(request, response, parsedUrl);
   } else {
     handleGet(request, response, parsedUrl);

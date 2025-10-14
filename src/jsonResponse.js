@@ -1,9 +1,9 @@
-
 const fs = require('fs');
-const countriesfile = fs.readFileSync(`${__dirname}/../db/countries.json`)
-const db = JSON.parse(countriesfile);
 
-//Function that actually sends out data
+const countriesfile = fs.readFileSync(`${__dirname}/../db/countries.json`);
+const database = JSON.parse(countriesfile);
+
+// Function that actually sends out data
 function respondJSON(request, response, status, object) {
   const content = JSON.stringify(object);
   //   console.log(content);
@@ -18,157 +18,125 @@ function respondJSON(request, response, status, object) {
   response.end();
 }
 let o;
-//NTS: this is so on the border of DRY so ask about it/ rework it
-//function for applying search parameters returning the new dataset
-function restrict(dataset,restrictions){
-   //code to limit the returning data 
-   let restrictedDataset = [];
-    o = 0;
-   while(db[o]){
-      if (db[o][dataset].toLowerCase().includes(restrictions.toLowerCase())) {
-         restrictedDataset.push(db[o]);
+// function for applying search parameters returning the new dataset
+function filter(type, restrictions, db = database) {
+  // code to limit the returning data
+  const restrictedDataset = [];
+  o = 0;
+  while (db[o]) {
+    if (db[o][type].toLowerCase().includes(restrictions.toLowerCase())) {
+      restrictedDataset.push(db[o]);
+    }
+    o++;
+  }
+  return restrictedDataset;
+}
+
+// When there are no restrictions but want only 1 type
+function onlyValue(keysToKeep, dataset = database) {
+  return dataset.map(item => {
+    const newItem = {};
+    for (const key of keysToKeep) {
+      if (key in item) {
+        newItem[key] = item[key];
       }
-      o++;
-   }
-
-
-   //NTS: Needs to be done uniquely probably
-   // else if(dataset === 'coords'){
-   //    o = 0;
-   //    while(db[o]){
-   //       if (db[o].capital.toLowerCase().includes(restrictions.toLowerCase())) {
-   //          restrictedDataset.push(db[o]);
-   //       }
-   //       o++;
-   //    }
-   // }
-
-   return restrictedDataset;
+    }
+    return newItem;
+  });
 }
 
-//When there are no restrictions but want only 1 type
-function onlyValue(dataset){
-   let restrictedDataset = [];
-   o = 0;
-      while(db[o]){ 
-         restrictedDataset.push(db[o][dataset]);
-         o++;
-      }
-   return restrictedDataset;
+// Get requests || Status 200
+function getBlank(request, response) {
+  let {restrictions} = request.headers;
+  try{restrictions = JSON.parse(restrictions);}
+  catch(error){restrictions = {};}
+
+  let{amount} = request.headers;
+  let dataset = database;
+  let keysToKeep = [];
+  for (const key in restrictions) {
+    if (restrictions[key]) {
+      dataset = filter(key, restrictions[key], dataset);
+      keysToKeep.push(key);
+    }
+  }
+  if(amount === 'justOne'){
+    console.log('justOne');
+    dataset = onlyValue(keysToKeep,dataset);
+    // for (const key in restrictions) {
+      
+    // }
+  }
+  
+  
+  const responseJSON = { message: `${JSON.stringify(dataset)}` };
+
+  return respondJSON(request, response, 200, responseJSON);
 }
 
-let restriction;
-//get Country Names || 200 status
-function getNames(request, response){
-   restriction = request.headers.restriction;
-   let dataset = onlyValue('name');
-   if(restriction){
-      dataset = restrict('name',restriction)
-   }
-   const responseJSON = {message: `${JSON.stringify(dataset)}`};
-   // console.log(dataset);
-   return respondJSON(request,response,200, responseJSON)
+// Check if the country is already in API if it is return TRUE
+function countryCheck(name) {
+  o = 0;
+  while (database[o]) {
+    if (name.toLowerCase() === database[o].name.toLowerCase()) {
+      return database[o];
+    }
+    o++;
+  }
+  return false;
 }
 
-// get Capitals || 200 status
-function getCapitals(request, response, restriction){
-   restriction = request.headers.restriction;
-   let dataset = onlyValue('capital');
-   if(restriction){
-      dataset = restrict('capital',restriction)
-   }
-   const responseJSON = {message: `${JSON.stringify(dataset)}`};
+function addCountry(request, response) {
+  
+  const {
+    name, capital, region, nationality,
+  } = request.body;
+  if(!name || !capital || !region || !nationality){
+    badRequest(request,response,true);
+  }
 
-   return respondJSON(request,response,200, responseJSON)
-}
+  //if the person hit the wrong button have it edit instead of add
+  let wrongbutton = countryCheck(name) 
+  if(wrongbutton){
+     editCountry(request,response)
+    return;
+  }
 
-// get Region || 200 status
-function getRegion(request, response, restriction){
-   restriction = request.headers.restriction;
-   let dataset = onlyValue('region');
-   if(restriction){
-      dataset = restrict('region',restriction)
-   }
-   const responseJSON = {message: `${JSON.stringify(dataset)}`};
-
-   return respondJSON(request,response,200, responseJSON)
-}
-
-
-function getNationality(request, response, restriction){
-   restriction = request.headers.restriction;
-   let dataset = onlyValue('nationality');
-   if(restriction){
-      dataset = restrict('nationality',restriction)
-   }
-   const responseJSON = {message: `${JSON.stringify(dataset)}`};
-
-   return respondJSON(request,response,200, responseJSON)
-}
-
-
-
-//NTS DO THIS SEPERATELY
-// get Coordinates || 200 status
-function getCoords(request, response, restriction){
-   const responseJSON = {message: 'boom'};
-
-   return respondJSON(request,response,200, responseJSON)
-}
-
-//Check if the country is already in API if it is return TRUE
-function countryCheck(name){
-   o = 0;
-   while(db[o]){
-     if (name.toLowerCase() === db[o].name.toLowerCase()) {
-         return db[o];
-      }
-      o++;
-   }
-   return false;
-}
-
-function addCountry(request,response){
-   // let wrongbutton = countryCheck //assigns the object that has the matching name to send to edit
-   // if(wrongbutton){
-   //    editCountry(request,response, wrongbutton)
-   //    return;
-   // }
-   const {name, capital, region, nationality} = request.body;
-   //NTS ADD STATUS 400 HERE
-   db.push({
-      name,
-      capital,
-      region,
-      nationality
-   }) 
-   const responseJSON = {
+  database.push({
+    name,
+    capital,
+    region,
+    nationality,
+  });
+  const responseJSON = {
     message: 'Country added',
   };
-   return respondJSON(request, response, 201, responseJSON);
+  return respondJSON(request, response, 201, responseJSON);
 }
 
-function editCountry(request,response,){
-   const {name, capital, region, nationality} = request.body;
-   const toBeChanged = countryCheck(name)
-   toBeChanged.capital = capital;
-   toBeChanged.region = region;
-   toBeChanged.nationality = nationality;
+function editCountry(request, response) {
+  const {
+    name, capital, region, nationality,
+  } = request.body;
+  if(!name){badRequest(request,response,true);}
+  const toBeChanged = countryCheck(name);
+  toBeChanged.capital = capital;
+  toBeChanged.region = region;
+  toBeChanged.nationality = nationality;
 
-   const responseJSON = {
+  const responseJSON = {
     message: 'Update complete',
   };
-   return respondJSON(request, response, 204, responseJSON);
+  return respondJSON(request, response, 204, responseJSON);
 }
 
-
-// bad request 400  NTS: might need rework to be used 
-function badRequest(request, response) { 
+// bad request 400  NTS: might need rework to be used
+function badRequest(request, response, reason) {
   const responseJSON = {
     message: 'Request is valid',
     id: '200',
   };
-  if (!request.query.valid || request.query.valid !== 'true') {
+  if (!request.query.valid || request.query.valid !== 'true' || reason) {
     responseJSON.message = 'missing required parameter';
     responseJSON.id = '400';
     return respondJSON(request, response, 400, responseJSON);
@@ -177,7 +145,7 @@ function badRequest(request, response) {
 }
 
 // error 404
-function notFound(request, response) { 
+function notFound(request, response) {
   const responseJSON = {
     message: 'does not exist',
     id: '404',
@@ -185,17 +153,12 @@ function notFound(request, response) {
   return respondJSON(request, response, 404, responseJSON);
 }
 
-
 module.exports = {
-   getNames,
-   getCapitals,
-   getRegion,
-   getCoords,
-   getNationality,
-   
-   addCountry,
-   editCountry,
-   
-   badRequest,
-   notFound,
-}
+  getBlank,
+
+  addCountry,
+  editCountry,
+
+  badRequest,
+  notFound,
+};

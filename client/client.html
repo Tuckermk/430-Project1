@@ -49,11 +49,15 @@
     };
 
     let methoder;
+    let amount;
    //send the GET request to the server
-   function sendFetchRequest(url, restriction){
+   function sendFetchRequest(url, restrictions){
       const options = {
          method: methoder.value,
-         headers: {'restriction': restriction}
+         headers: {
+            'restrictions': JSON.stringify(restrictions),
+            'amount': amount.value,
+         }
       }
       
       const fetchPromise = fetch(url, options);
@@ -73,7 +77,9 @@
 
       countryButton.addEventListener("click", (e) => {
         e.preventDefault(); 
-        let restriction = countryRestrictionField.value.trim();
+        let restriction = {
+          'name':countryRestrictionField.value.trim(),
+        };
         sendFetchRequest('/countries', restriction);
 
       });
@@ -84,7 +90,9 @@
 
       capitalButton.addEventListener("click", (e) => {
         e.preventDefault(); 
-        let restriction = capitalRestrictionField.value.trim();
+        let restriction = {
+          'capital':capitalRestrictionField.value.trim(),
+        };
         sendFetchRequest('/capitals', restriction);
 
       });
@@ -95,7 +103,9 @@
 
       regionButton.addEventListener("click", (e) => {
         e.preventDefault(); 
-        let restriction = regionRestrictionField.value.trim();
+        let restriction = {
+          'region':regionRestrictionField.value.trim(),
+        };
         sendFetchRequest('/regions', restriction);
 
       });
@@ -106,8 +116,23 @@
 
       nationalityButton.addEventListener("click", (e) => {
         e.preventDefault(); 
-        let restriction = nationalityRestrictionField.value.trim();
-        sendFetchRequest('/nationality', restriction);
+        let restriction = {
+          'nationality':nationalityRestrictionField.value.trim(),
+        };
+        sendFetchRequest('/nationality', restriction, 'nationality');
+
+      });
+
+      const multiButton = document.querySelector('#multiSend');
+        multiButton.addEventListener("click", (e) => {
+        e.preventDefault(); 
+        let restriction = {
+          'name':countryRestrictionField.value.trim(),
+          'region':regionRestrictionField.value.trim(),
+          'capital':capitalRestrictionField.value.trim(),
+          'nationality':nationalityRestrictionField.value.trim(),
+        }
+        sendFetchRequest('/multi', restriction);
 
       });
 
@@ -136,6 +161,7 @@
       });
 
       methoder = document.querySelector('#methodSelect');
+      amount = document.querySelector('#dataAmount')
 
       //Once we have a response, handle it.
 
@@ -183,6 +209,7 @@
       <input id="nationalityRestrictionsField" type="text"/>
       <button id="nationalitySend">Send</button>
    </form>
+   <button id="multiSend">Send All Filters</button>
    <form id ="postForm" action="/addCountry"><button id="addCountrySend">Add Country</button></form>
    <form id ="postForm" action="/editCountry"><button id="editCountrySend">Edit Country</button></form>
    <!-- <form id ="coordsForm" action="/coords" method="get">
@@ -195,6 +222,10 @@
    <select id="methodSelect">
         <option value="get">GET</option>
         <option value="head">HEAD</option>
+   </select>
+   <select id="dataAmount">
+        <option value="all">All</option>
+        <option value="justOne">Just One</option>
    </select>
 
   </section>
