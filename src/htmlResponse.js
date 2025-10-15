@@ -1,6 +1,7 @@
 const fs = require('fs');
 
 const index = fs.readFileSync(`${__dirname}/../client/client.html`);
+const docs = fs.readFileSync(`${__dirname}/../client/docs.html`);
 const css = fs.readFileSync(`${__dirname}/../client/style.css`);
 
 function getIndex(request, response) {
@@ -9,6 +10,14 @@ function getIndex(request, response) {
     'Content-Length': Buffer.byteLength(index, 'utf8'),
   });
   response.write(index);
+  response.end();
+}
+function getDocs(request, response) {
+  response.writeHead(200, {
+    'Content-Type': 'text/html',
+    'Content-Length': Buffer.byteLength(docs, 'utf8'),
+  });
+  response.write(docs);
   response.end();
 }
 function getCSS(request, response) {
@@ -20,4 +29,5 @@ function getCSS(request, response) {
   response.end();
 }
 
-module.exports = { getIndex, getCSS };
+
+module.exports = { getIndex, getCSS ,getDocs};

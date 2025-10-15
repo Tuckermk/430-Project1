@@ -82,7 +82,7 @@
     if(capitalValue && (url === '/multi' || url === '/capital')) {restriction.capital = capitalValue;}
 
     let nationalityValue = nationalityRestrictionField.value.trim();
-    if(nationalityValue && (url === '/multi' || url === '/nationality')) {restriction.nationality = nationalityValue;}
+    if(nationalityValue && (url === '/multi' || url === '/nationality')) {restriction.nationality = countryValue;}
     sendFetchRequest(url,restriction);
   }
 
@@ -91,76 +91,21 @@
       const countryForm = document.querySelector('#countryForm');
       const countryButton = document.querySelector('#countrySend');
 
-      countryButton.addEventListener("click", (e) => {
-        e.preventDefault(); 
-        preFetch('/name');
-      });
 
       capitalRestrictionField = document.querySelector('#capitalRestrictionsField');
       const capitalForm = document.querySelector('#capitalForm');
       const capitalButton = document.querySelector('#capitalSend');
 
-      capitalButton.addEventListener("click", (e) => {
-        e.preventDefault(); 
-
-        preFetch('/capital');
-
-      });
 
       regionRestrictionField = document.querySelector('#regionRestrictionsField');
       const regionForm = document.querySelector('#regionForm');
       const regionButton = document.querySelector('#regionSend');
 
-      regionButton.addEventListener("click", (e) => {
-        e.preventDefault(); 
-        preFetch('/region');
-
-      });
-
       nationalityRestrictionField = document.querySelector('#nationalityRestrictionsField');
       const nationalityForm = document.querySelector('#nationalityForm');
       const nationalityButton = document.querySelector('#nationalitySend');
 
-      nationalityButton.addEventListener("click", (e) => {
-        e.preventDefault(); 
-        preFetch('/nationality');
-      });
-
-      const multiButton = document.querySelector('#multiSend');
-        multiButton.addEventListener("click", (e) => {
-        e.preventDefault(); 
-        preFetch('/multi');
-      });
-
-      const addButton = document.querySelector('#addCountrySend');
-         addButton.addEventListener("click", (e) => {
-         e.preventDefault(); 
-         sendPost('/addCountry');
-      });
-
-      const editButton = document.querySelector('#editCountrySend');
-         editButton.addEventListener("click", (e) => {
-         e.preventDefault(); 
-         sendPost('/editCountry');
-      });
-
-      methoder = document.querySelector('#methodSelect');
-      amount = document.querySelector('#dataAmount')
-
     };
-   const sendPost = async (url) => {
-      //this is just beautiful
-      const formData = `name=${countryRestrictionField.value}&capital=${capitalRestrictionField.value}&region=${regionRestrictionField.value}&nationality=${nationalityRestrictionField.value}`;
-
-       const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'Accept': 'application/json',
-        },
-        body: formData,
-      });
-   }
 
     window.onload = init;
   </script>
@@ -170,45 +115,65 @@
   <br>
   <a href="/docs">Documentation</a>
   <section id="top">
-   <h3>Countries API</h3>
+   <h3>Countries Docs Page</h3>
    <hr>
+   <!-- something something block quotes and good spacing something something no -->
    <form id ="countryForm" action="/countries" method="get">
       <label for="countryRestrictions">Country Restrictions: </label>
-      <input id="countryRestrictionsField" type="text"/>
-      <button id="countrySend">Send</button>
+      <h5>The string input for this restriction is to search countries by name</h4>
+      <h5>If you use the button to the right of the input bar it will look specifically</h4>
+      <h5>for countries with relevant names ignoring all other inputs</h4>
+      <h6>Example inputs: <strong>fra</strong>,<strong>france</strong></h6>
+      <h6>Both of these will result in just France appearing</h6>
    </form>
    <hr>
    <form id ="capitalForm" action="/capitals" method="get">
       <label for="capitalRestrictions">Capital Restrictions: </label>
-      <input id="capitalRestrictionsField" type="text"/>
-      <button id="capitalSend">Send</button>
+      <h5>The string input for this restriction is to search capitals by name</h4>
+      <h5>If you use the button to the right of the input bar it will look specifically</h4>
+      <h5>for capitals with relevant names ignoring all other inputs</h4>
+      <h6>Example input: <strong>akar</strong></h6>
+      <h6>Will result in Indonesia's capital, Jakarta and Senegal's capital Dakar being shown</h6>
    </form>
    <hr>
    <form id ="regionForm" action="/regions" method="get">
       <label for="regionRestrictions">Region Restrictions: </label>
-      <input id="regionRestrictionsField" type="text"/>
-      <button id="regionSend">Send</button>
+      <h5>The string input for this restriction is to search regions by name</h5>
+      <h5>If you use the button to the right of the input bar it will look specifically</h5>
+      <h5>for capitals with relevant names ignoring all other inputs</h5>
+      <h6>Example input: <strong>Europe</strong></h6>
+      <h6>Will result in the resulting nations of Europe</h6>
+      <h6>Example input: <strong>Amer</strong> to <strong>Americas</strong></h6>
+      <h6>Will result in the resulting nations of the Americas</h6>
    </form>
    <hr>
    <form id ="nationalityForm" action="/nationality" method="get">
       <label for="nationalityRestrictions">Nationality Restrictions: </label>
-      <input id="nationalityRestrictionsField" type="text"/>
-      <button id="nationalitySend">Send</button>
+      <h5>The string input for this restriction is to search regions by name</h5>
+      <h5>If you use the button to the right of the input bar it will look specifically</h5>
+      <h5>for capitals with relevant names ignoring all other inputs</h5>
+      <h6>Example input: <strong>germ</strong> to <strong>GERMAN</strong></h6>
+      <h6>Will result in the resulting germany</h6>
+      <h6>Example input: <strong>Aus</strong> to <strong>austr</strong></h6>
+      <h6>Will result in Australia and Austria</h6>
    </form>
+   <form>
    <hr>
-   <button id="multiSend">Send All Filters</button>
-   <form id ="postForm" action="/addCountry"><button id="addCountrySend">Add Country</button></form>
-   <form id ="postForm" action="/editCountry"><button id="editCountrySend">Edit Country</button></form>
+    <h5>The Send All filters button placed about here will take all the inputs in the restriction bars</h5>
+    <h5>and apply them resulting in any number of combinations, that frankly most will be empty</h5>
+    <hr>
+    <h5>The add button requires all restriction bars to be filled at which point hitting it will add a nation</h5>
+    <h5>The edit button only requires the country name to be filled as to adjust any other feature about them</h5>
+    <h5>by filling in the other restriction bars</h5>
+   </form>
 
+   <form>
    <hr>
-   <select id="methodSelect">
-        <option value="get">GET</option>
-        <option value="head">HEAD</option>
-   </select>
-   <select id="dataAmount">
-        <option value="all">All</option>
-        <option value="justOne">Search Params</option>
-   </select>
+    <h5>Method select drop down simply swaps between making GET and HEAD Request for all other buttons</h5>
+    <h5>All and Search Params drop down swaps between showing you all the information about a filtered nation</h5>
+    <h5>or limiting it to just the search param areas you have filled in</h5>
+    <hr>
+   </form>
 
   </section>
   <section id="content">

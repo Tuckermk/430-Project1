@@ -27,10 +27,11 @@ const pathes = {
   // html pathes
   '/': htmlHandler.getIndex,
   '/style.css': htmlHandler.getCSS,
+  '/docs' :htmlHandler.getDocs,
   // json pathes
-  '/countries': jsonHandler.getBlank,
-  '/capitals': jsonHandler.getBlank,
-  '/regions': jsonHandler.getBlank,
+  '/name': jsonHandler.getBlank,
+  '/capital': jsonHandler.getBlank,
+  '/region': jsonHandler.getBlank,
   '/coords': jsonHandler.getBlank,
   '/nationality': jsonHandler.getBlank,
   '/multi': jsonHandler.getBlank,
